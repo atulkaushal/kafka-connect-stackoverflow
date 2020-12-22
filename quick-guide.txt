@@ -1,0 +1,37 @@
+Config Definitions:
+- The way to communicate to the user how you want your configuration to be. 
+- Configurations can be mandatory and optional(with default values).
+- It defines all the properties required for executing the connector.
+
+Connector:
+- This is responsible for loading the configurations and use them to create few tasks.
+		- public String version()								//version of connector.
+		- public void start(Map<String,String> map)				//Start the task.
+		- public Class<? extends Task> taskClass()				//Class of Connector.
+		- public List<Map<String,String>> taskConfigs(int i)	//Config required by connector.
+		- public void stop()									//Stop the task.
+		- public ConfigDef config()								//Return config definitions for connector.
+		
+Schemas:
+- It is an abstraction that allow you to define how your data structure will look like. It is using primitive types,
+and then Kafka connect framework will convert it into JSON or AVRO as needed.
+- It is important to correctly design your schema before you program.
+
+DataModels:
+- POJOs for schema attributes.
+
+Source Partitions, Source Offsets:
+- Source Partitions allows Kafka Connect to know which source you've been reading.
+- Source Offsets allow Kafka connect to track until when you've been reading fro the source partition you chose.
+- They are different than partitions and offsets for Kafka.
+
+Task:
+- It does the actual job.
+- It will initialize the connector and then find where to resume from and finally poll the source for records
+		- public String version()
+		- public void start(Map<String,String> map)
+		- public List<SourceRecord> poll throws InterruptedException
+		- public void stop()
+		
+
+
