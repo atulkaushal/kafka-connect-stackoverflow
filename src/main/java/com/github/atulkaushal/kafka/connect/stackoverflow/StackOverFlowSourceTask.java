@@ -157,20 +157,20 @@ public class StackOverFlowSourceTask extends SourceTask {
   private SourceRecord generateSourceRecord(Question question) {
     return new SourceRecord(
         sourcePartition(),
-        sourceOffset(question.getLastActivityDate()),
+        sourceOffset(question.getCreationDate()),
         config.getTopic(),
         null, // partition will be inferred by the framework
         KEY_SCHEMA,
         buildRecordKey(question),
         VALUE_SCHEMA,
         buildRecordValue(question),
-        question.getLastActivityDate().toEpochMilli());
+        question.getCreationDate().toEpochMilli());
   }
 
   /** Stop. */
   @Override
   public void stop() {
-    // Do whatever is required to stop your task.
+    log.info("Shutting down Stackoverflow stream");
   }
 
   /**
@@ -180,7 +180,8 @@ public class StackOverFlowSourceTask extends SourceTask {
    */
   private Map<String, String> sourcePartition() {
     Map<String, String> map = new HashMap<>();
-    map.put(QUESTION_ID_FIELD, config.getTags());
+    map.put(TAGS_FIELD, config.getTags());
+    map.put(CREATION_DATE_FIELD, config.getSince().toString());
     return map;
   }
 
@@ -192,7 +193,7 @@ public class StackOverFlowSourceTask extends SourceTask {
    */
   private Map<String, String> sourceOffset(Instant updatedAt) {
     Map<String, String> map = new HashMap<>();
-    map.put(LAST_ACTIVITY_DATE_FIELD, DateUtils.maxInstant(updatedAt, nextQuerySince).toString());
+    map.put(CREATION_DATE_FIELD, DateUtils.maxInstant(updatedAt, nextQuerySince).toString());
     map.put(NEXT_PAGE_FIELD, nextPageToVisit.toString());
     return map;
   }

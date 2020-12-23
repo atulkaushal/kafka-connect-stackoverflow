@@ -138,9 +138,8 @@ public class StackOverFlowAPIHttpClient {
    */
   protected String constructUrl(Integer page, Instant since) {
     return String.format(
-        "https://api.stackexchange.com/2.2/questions?pagesize=2&todate=1608508800&order=desc&sort=creation&tagged=%s&site=stackoverflow" // ,
-        // config.getTags(), config.getRepoConfig(), page, config.getBatchSize(), since.toString()
-        );
+        "https://api.stackexchange.com/2.2/questions?pagesize=%s&fromdate=%s&order=asc&sort=creation&tagged=%s&site=stackoverflow",
+        config.getBatchSize(), since.getEpochSecond(), config.getTags());
   }
 
   /**

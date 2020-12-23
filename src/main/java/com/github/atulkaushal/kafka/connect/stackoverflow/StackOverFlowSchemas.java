@@ -85,7 +85,7 @@ public class StackOverFlowSchemas {
       SchemaBuilder.struct()
           .name(SCHEMA_KEY)
           .version(1)
-          .field(QUESTION_ID_FIELD, Schema.INT64_SCHEMA)
+          .field(CREATION_DATE_FIELD, Timestamp.SCHEMA)
           .build();
 
   /** The Constant OWNER_SCHEMA. */
