@@ -1,7 +1,6 @@
 package com.github.atulkaushal.kafka.connect.stackoverflow.model;
 
 import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.ANSWER_COUNT_FIELD;
-import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.CONTENT_LICENSE_FIELD;
 import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.CREATION_DATE_FIELD;
 import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.IS_ANSWERED_FIELD;
 import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.LAST_ACTIVITY_DATE_FIELD;
@@ -14,8 +13,8 @@ import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSc
 
 import java.time.Instant;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONObject;
 
@@ -27,7 +26,7 @@ import org.json.JSONObject;
 public class Question {
 
   /** The tags. */
-  private List<String> tags;
+  private Set<String> tags;
 
   /** The is answered. */
   private boolean isAnswered;
@@ -84,7 +83,7 @@ public class Question {
    * @param title the title
    */
   public Question(
-      List<String> tags,
+      Set<String> tags,
       boolean isAnswered,
       Integer viewCount,
       Integer answerCount,
@@ -114,7 +113,7 @@ public class Question {
    *
    * @return the tags
    */
-  public List<String> getTags() {
+  public Set<String> getTags() {
     return tags;
   }
 
@@ -123,7 +122,7 @@ public class Question {
    *
    * @param tags the new tags
    */
-  public void setTags(List<String> tags) {
+  public void setTags(Set<String> tags) {
     this.tags = tags;
   }
 
@@ -497,7 +496,7 @@ public class Question {
 
     Question question = new Question();
     question.withAnswerCount(jsonObject.getInt(ANSWER_COUNT_FIELD));
-    question.withContentLicense(jsonObject.getString(CONTENT_LICENSE_FIELD));
+    // question.withContentLicense(jsonObject.getString(CONTENT_LICENSE_FIELD));
     question.withCreationDate(Instant.ofEpochSecond(jsonObject.getLong(CREATION_DATE_FIELD)));
     question.withIsAnswered(jsonObject.getBoolean(IS_ANSWERED_FIELD));
     question.withLastActivityDate(

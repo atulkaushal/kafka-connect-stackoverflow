@@ -90,7 +90,7 @@ public class StackOverFlowSourceConnectorConfig extends AbstractConfig {
         .define(
             BATCH_SIZE_CONFIG,
             Type.INT,
-            100,
+            10,
             new BatchSizeValidator(),
             Importance.LOW,
             BATCH_SIZE_DOC)
