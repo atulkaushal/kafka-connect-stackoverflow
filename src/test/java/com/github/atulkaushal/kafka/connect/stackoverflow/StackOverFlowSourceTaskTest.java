@@ -64,11 +64,11 @@ public class StackOverFlowSourceTaskTest {
         new StackOverFlowAPIHttpClient(stackOverFlowSourceTask.config);
     String url =
         stackOverFlowSourceTask.stackOverFlowHttpAPIClient.constructUrl(
-            stackOverFlowSourceTask.nextPageToVisit, stackOverFlowSourceTask.nextQuerySince);
+            stackOverFlowSourceTask.nextQuerySince);
     System.out.println(url);
     HttpResponse<JsonNode> httpResponse =
         stackOverFlowSourceTask.stackOverFlowHttpAPIClient.getNextQuestionsAPI(
-            stackOverFlowSourceTask.nextPageToVisit, stackOverFlowSourceTask.nextQuerySince);
+            stackOverFlowSourceTask.nextQuerySince);
     if (httpResponse.getStatus() != 403) {
       assertEquals(200, httpResponse.getStatus());
       // Set<String> headers = httpResponse.getHeaders().keySet();

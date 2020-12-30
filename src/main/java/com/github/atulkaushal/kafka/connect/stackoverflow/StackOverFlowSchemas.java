@@ -70,14 +70,15 @@ public class StackOverFlowSchemas {
 
   /** The Constant SCHEMA_KEY. */
   // Schema names
-  public static final String SCHEMA_KEY = "com.atulkaushal.kafka.connect.github.QuestionKey";
+  public static final String SCHEMA_KEY = "com.atulkaushal.kafka.connect.stackoverflow.QuestionKey";
 
   /** The Constant SCHEMA_VALUE_QUESTION. */
   public static final String SCHEMA_VALUE_QUESTION =
-      "com.atulkaushal.kafka.connect.github.QuestionValue";
+      "com.atulkaushal.kafka.connect.stackoverflow.QuestionValue";
 
   /** The Constant SCHEMA_VALUE_OWNER. */
-  public static final String SCHEMA_VALUE_OWNER = "com.atulkaushal.kafka.connect.github.OwnerValue";
+  public static final String SCHEMA_VALUE_OWNER =
+      "com.atulkaushal.kafka.connect.stackoverflow.OwnerValue";
 
   /** The Constant KEY_SCHEMA. */
   // Key Schema
@@ -85,7 +86,10 @@ public class StackOverFlowSchemas {
       SchemaBuilder.struct()
           .name(SCHEMA_KEY)
           .version(1)
+          .field(QUESTION_ID_FIELD, Schema.INT64_SCHEMA)
+          .optional()
           .field(CREATION_DATE_FIELD, Timestamp.SCHEMA)
+          .optional()
           .build();
 
   /** The Constant OWNER_SCHEMA. */
@@ -94,9 +98,14 @@ public class StackOverFlowSchemas {
       SchemaBuilder.struct()
           .name(SCHEMA_VALUE_OWNER)
           .version(1)
-          .field(OWNER_FIELD, Schema.STRING_SCHEMA)
-          .field(USER_ID_FIELD, Schema.INT32_SCHEMA)
+          .field(OWNER_LINK_FIELD, Schema.STRING_SCHEMA)
+          .optional()
+          .field(USER_ID_FIELD, Schema.INT64_SCHEMA)
+          .optional()
           .field(DISPLAY_NAME_FIELD, Schema.STRING_SCHEMA)
+          .optional()
+          .field(USER_TYPE_FIELD, Schema.STRING_SCHEMA)
+          .optional()
           .build();
 
   /** The Constant VALUE_SCHEMA. */
@@ -105,17 +114,28 @@ public class StackOverFlowSchemas {
           .name(SCHEMA_VALUE_QUESTION)
           .version(2)
           .field(TAGS_FIELD, Schema.STRING_SCHEMA)
+          .optional()
           .field(IS_ANSWERED_FIELD, Schema.BOOLEAN_SCHEMA)
+          .optional()
           .field(TITLE_FIELD, Schema.STRING_SCHEMA)
+          .optional()
           .field(VIEW_COUNT_FIELD, Schema.INT32_SCHEMA)
+          .optional()
           .field(ANSWER_COUNT_FIELD, Schema.INT32_SCHEMA)
+          .optional()
           .field(SCORE_FIELD, Schema.INT32_SCHEMA)
+          .optional()
           .field(LAST_ACTIVITY_DATE_FIELD, Timestamp.SCHEMA)
+          .optional()
           .field(CREATION_DATE_FIELD, Timestamp.SCHEMA)
+          .optional()
           .field(QUESTION_ID_FIELD, Schema.INT64_SCHEMA)
+          .optional()
           .field(CONTENT_LICENSE_FIELD, Schema.STRING_SCHEMA)
+          .optional()
           .field(LINK_FIELD, Schema.STRING_SCHEMA)
-          .field(TITLE_FIELD, Schema.STRING_SCHEMA)
+          .optional()
           .field(OWNER_FIELD, OWNER_SCHEMA)
+          .optional()
           .build();
 }

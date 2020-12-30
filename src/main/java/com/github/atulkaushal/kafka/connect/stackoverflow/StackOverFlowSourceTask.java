@@ -17,17 +17,18 @@ import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSc
 import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.USER_TYPE_FIELD;
 import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.VALUE_SCHEMA;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,15 +122,15 @@ public class StackOverFlowSourceTask extends SourceTask {
    */
   @Override
   public List<SourceRecord> poll() throws InterruptedException {
+    log.info("Polling data from StackOverflow");
     stackOverFlowHttpAPIClient.sleepIfNeed();
 
     // fetch data
     final ArrayList<SourceRecord> records = new ArrayList<>();
-    JSONArray questions =
-        stackOverFlowHttpAPIClient.getNextQuestions(nextPageToVisit, nextQuerySince);
+    JSONObject result = stackOverFlowHttpAPIClient.getNextQuestions(nextQuerySince);
     // we'll count how many results we get with i
     int i = 0;
-    for (Object obj : questions) {
+    for (Object obj : result.getJSONArray("items")) {
       Question question = Question.fromJson((JSONObject) obj);
       SourceRecord sourceRecord = generateSourceRecord(question);
       records.add(sourceRecord);
@@ -145,6 +146,7 @@ public class StackOverFlowSourceTask extends SourceTask {
       nextPageToVisit = 1;
       stackOverFlowHttpAPIClient.sleep();
     }
+    log.info("returning records");
     return records;
   }
 
@@ -209,7 +211,7 @@ public class StackOverFlowSourceTask extends SourceTask {
     Struct key =
         new Struct(KEY_SCHEMA)
             .put(QUESTION_ID_FIELD, question.getQuestionId())
-            .put(LAST_ACTIVITY_DATE_FIELD, question.getLastActivityDate());
+            .put(CREATION_DATE_FIELD, Date.from(question.getCreationDate()));
 
     return key;
   }
@@ -244,5 +246,17 @@ public class StackOverFlowSourceTask extends SourceTask {
     valueStruct.put(OWNER_FIELD, ownerStruct);
 
     return valueStruct;
+  }
+
+  public static void main(String... args) throws IOException {
+    Properties properties = new Properties();
+    properties.load(
+        StackOverFlowSourceTask.class.getResourceAsStream(
+            "StackOverFlowSourceConnector.properties"));
+
+    Map<String, String> map = new HashMap<>();
+    properties.forEach((key, value) -> map.put(key.toString(), value.toString()));
+
+    // start(map);
   }
 }

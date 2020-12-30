@@ -85,8 +85,8 @@ public class StackOverFlowSourceConnectorConfig extends AbstractConfig {
    */
   public static ConfigDef conf() {
     return new ConfigDef()
-        .define(TOPIC_CONFIG, Type.STRING, Importance.HIGH, TOPIC_DOC)
-        .define(TAGS_CONFIG, Type.STRING, Importance.HIGH, TAGS_DOC)
+        .define(TOPIC_CONFIG, Type.STRING, "stackoverflow-topic", Importance.HIGH, TOPIC_DOC)
+        .define(TAGS_CONFIG, Type.STRING, "kafka", Importance.HIGH, TAGS_DOC)
         .define(
             BATCH_SIZE_CONFIG,
             Type.INT,
@@ -102,7 +102,9 @@ public class StackOverFlowSourceConnectorConfig extends AbstractConfig {
             Importance.HIGH,
             SINCE_DOC)
         .define(AUTH_USERNAME_CONFIG, Type.STRING, "", Importance.HIGH, AUTH_USERNAME_DOC)
-        .define(AUTH_PASSWORD_CONFIG, Type.PASSWORD, "", Importance.HIGH, AUTH_PASSWORD_DOC);
+        .define(AUTH_PASSWORD_CONFIG, Type.PASSWORD, "", Importance.HIGH, AUTH_PASSWORD_DOC)
+        .define("key.converter.schemas.enable", Type.BOOLEAN, false, Importance.HIGH, "")
+        .define("value.converter.schemas.enable", Type.BOOLEAN, false, Importance.HIGH, "");
   }
 
   /**

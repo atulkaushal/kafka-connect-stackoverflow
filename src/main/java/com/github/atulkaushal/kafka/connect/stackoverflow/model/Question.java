@@ -1,6 +1,7 @@
 package com.github.atulkaushal.kafka.connect.stackoverflow.model;
 
 import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.ANSWER_COUNT_FIELD;
+import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.CONTENT_LICENSE_FIELD;
 import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.CREATION_DATE_FIELD;
 import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.IS_ANSWERED_FIELD;
 import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.LAST_ACTIVITY_DATE_FIELD;
@@ -8,15 +9,19 @@ import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSc
 import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.OWNER_FIELD;
 import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.QUESTION_ID_FIELD;
 import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.SCORE_FIELD;
+import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.TAGS_FIELD;
 import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.TITLE_FIELD;
 import static com.github.atulkaushal.kafka.connect.stackoverflow.StackOverFlowSchemas.VIEW_COUNT_FIELD;
 
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
+import org.json.CDL;
 import org.json.JSONObject;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * The Class Question.
@@ -26,7 +31,7 @@ import org.json.JSONObject;
 public class Question {
 
   /** The tags. */
-  private Set<String> tags;
+  private String tags;
 
   /** The is answered. */
   private boolean isAnswered;
@@ -83,7 +88,7 @@ public class Question {
    * @param title the title
    */
   public Question(
-      Set<String> tags,
+      String tags,
       boolean isAnswered,
       Integer viewCount,
       Integer answerCount,
@@ -113,7 +118,7 @@ public class Question {
    *
    * @return the tags
    */
-  public Set<String> getTags() {
+  public String getTags() {
     return tags;
   }
 
@@ -122,8 +127,19 @@ public class Question {
    *
    * @param tags the new tags
    */
-  public void setTags(Set<String> tags) {
+  public void setTags(String tags) {
     this.tags = tags;
+  }
+
+  /**
+   * With tags.
+   *
+   * @param tags the tags
+   * @return the question
+   */
+  public Question withTags(String tags) {
+    this.tags = tags;
+    return this;
   }
 
   /**
@@ -494,23 +510,82 @@ public class Question {
    */
   public static Question fromJson(JSONObject jsonObject) {
 
+    System.out.println("********************QUESTION JSON**********************************");
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    System.out.println(gson.toJson(jsonObject));
+    System.out.println("******************************************************");
+
     Question question = new Question();
-    question.withAnswerCount(jsonObject.getInt(ANSWER_COUNT_FIELD));
-    // question.withContentLicense(jsonObject.getString(CONTENT_LICENSE_FIELD));
-    question.withCreationDate(Instant.ofEpochSecond(jsonObject.getLong(CREATION_DATE_FIELD)));
-    question.withIsAnswered(jsonObject.getBoolean(IS_ANSWERED_FIELD));
+    question.withTags(
+        jsonObject.has(TAGS_FIELD)
+            ? CDL.rowToString(jsonObject.getJSONArray(TAGS_FIELD))
+            /*new Gson()
+            .fromJson(
+                jsonObject.getJSONArray(TAGS_FIELD).toString(),
+                new TypeToken<HashSet<String>>() {}.getType())*/
+            : null);
+    question.withAnswerCount(
+        jsonObject.has(ANSWER_COUNT_FIELD) ? jsonObject.getInt(ANSWER_COUNT_FIELD) : 0);
+    question.withContentLicense(
+        jsonObject.has(CONTENT_LICENSE_FIELD) ? jsonObject.getString(CONTENT_LICENSE_FIELD) : "");
+    question.withCreationDate(
+        jsonObject.has(CREATION_DATE_FIELD)
+            ? Instant.ofEpochSecond(jsonObject.getLong(CREATION_DATE_FIELD))
+            : null);
+    question.withIsAnswered(
+        jsonObject.has(IS_ANSWERED_FIELD) ? jsonObject.getBoolean(IS_ANSWERED_FIELD) : false);
     question.withLastActivityDate(
-        Instant.ofEpochSecond(jsonObject.getLong(LAST_ACTIVITY_DATE_FIELD)));
-    question.withLinkToQuestion(jsonObject.getString(LINK_FIELD));
-    question.withQuestionId(jsonObject.getInt(QUESTION_ID_FIELD));
-    question.withScore(jsonObject.getInt(SCORE_FIELD));
-    question.withTitle(jsonObject.getString(TITLE_FIELD));
-    question.withViewCount(jsonObject.getInt(VIEW_COUNT_FIELD));
+        jsonObject.has(LAST_ACTIVITY_DATE_FIELD)
+            ? Instant.ofEpochSecond(jsonObject.getLong(LAST_ACTIVITY_DATE_FIELD))
+            : null);
+    question.withLinkToQuestion(jsonObject.has(LINK_FIELD) ? jsonObject.getString(LINK_FIELD) : "");
+    question.withQuestionId(
+        jsonObject.has(QUESTION_ID_FIELD) ? jsonObject.getInt(QUESTION_ID_FIELD) : 0);
+    question.withScore(jsonObject.has(SCORE_FIELD) ? jsonObject.getInt(SCORE_FIELD) : 0);
+    question.withTitle(jsonObject.has(TITLE_FIELD) ? jsonObject.getString(TITLE_FIELD) : "");
+    question.withViewCount(
+        jsonObject.has(VIEW_COUNT_FIELD) ? jsonObject.getInt(VIEW_COUNT_FIELD) : 0);
 
     // Owner is mandatory
-    Owner owner = Owner.fromJson(jsonObject.getJSONObject(OWNER_FIELD));
+    Owner owner =
+        Owner.fromJson(jsonObject.has(OWNER_FIELD) ? jsonObject.getJSONObject(OWNER_FIELD) : null);
     question.withOwner(owner);
 
+    System.out.println("******************************************************");
+    System.out.println(question.toString());
+    System.out.println("******************************************************");
+
     return question;
+  }
+
+  @Override
+  public String toString() {
+    return "Question [tags="
+        + tags
+        + ", isAnswered="
+        + isAnswered
+        + ", viewCount="
+        + viewCount
+        + ", answerCount="
+        + answerCount
+        + ", score="
+        + score
+        + ", lastActivityDate="
+        + lastActivityDate
+        + ", creationDate="
+        + creationDate
+        + ", questionId="
+        + questionId
+        + ", contentLicense="
+        + contentLicense
+        + ", linkToQuestion="
+        + linkToQuestion
+        + ", title="
+        + title
+        + ", additionalProperties="
+        + additionalProperties
+        + ", owner="
+        + owner
+        + "]";
   }
 }

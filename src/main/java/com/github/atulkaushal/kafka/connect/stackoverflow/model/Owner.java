@@ -219,12 +219,43 @@ public class Owner {
    * @return the owner
    */
   public static Owner fromJson(JSONObject jsonObject) {
+
+    /* System.out.println("*********************OWNER JSON*********************************");
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    System.out.println(gson.toJson(jsonObject));
+    System.out.println("******************************************************");*/
     Owner owner = new Owner();
-    owner.setProfileLink(jsonObject.getString(OWNER_LINK_FIELD));
-    owner.setReputation(jsonObject.getInt(REPUTATION_FIELD));
-    owner.setUserId(jsonObject.getLong(USER_ID_FIELD));
-    owner.setUserType(jsonObject.getString(USER_TYPE_FIELD));
-    owner.setDisplayName(jsonObject.getString(DISPLAY_NAME_FIELD));
+    owner.setProfileLink(
+        jsonObject.has(OWNER_LINK_FIELD) ? jsonObject.getString(OWNER_LINK_FIELD) : "");
+    owner.setReputation(jsonObject.has(REPUTATION_FIELD) ? jsonObject.getInt(REPUTATION_FIELD) : 0);
+    owner.setUserId(jsonObject.has(USER_ID_FIELD) ? jsonObject.getLong(USER_ID_FIELD) : null);
+    owner.setUserType(jsonObject.has(USER_TYPE_FIELD) ? jsonObject.getString(USER_TYPE_FIELD) : "");
+    owner.setDisplayName(
+        jsonObject.has(DISPLAY_NAME_FIELD) ? jsonObject.getString(DISPLAY_NAME_FIELD) : "");
+    /*System.out.println("******************************************************");
+    System.out.println(owner.toString());
+    System.out.println("******************************************************");*/
     return owner;
+  }
+
+  @Override
+  public String toString() {
+    return "Owner [reputation="
+        + reputation
+        + ", userId="
+        + userId
+        + ", userType="
+        + userType
+        + ", acceptRate="
+        + acceptRate
+        + ", displayName="
+        + displayName
+        + ", profileImageURL="
+        + profileImageURL
+        + ", profileLink="
+        + profileLink
+        + ", additionalProperties="
+        + additionalProperties
+        + "]";
   }
 }
