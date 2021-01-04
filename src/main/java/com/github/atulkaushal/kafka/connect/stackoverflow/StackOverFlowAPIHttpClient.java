@@ -73,9 +73,6 @@ public class StackOverFlowAPIHttpClient {
       // xRateLimit = Integer.valueOf(headers.getFirst(X_RATELIMIT_LIMIT_HEADER));
       // xRateRemaining = Integer.valueOf(headers.getFirst(X_RATELIMIT_REMAINING_HEADER));
       // xRateReset = Integer.valueOf(headers.getFirst(X_RATELIMIT_RESET_HEADER));
-      log.info("********************************************************");
-      log.info(jsonResponse.toString());
-      log.info("********************************************************");
       switch (jsonResponse.getStatus()) {
         case 200:
           return jsonResponse.getBody().getObject();

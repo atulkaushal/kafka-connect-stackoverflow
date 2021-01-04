@@ -128,6 +128,9 @@ public class StackOverFlowSourceTask extends SourceTask {
     // fetch data
     final ArrayList<SourceRecord> records = new ArrayList<>();
     JSONObject result = stackOverFlowHttpAPIClient.getNextQuestions(nextQuerySince);
+    log.info("********************************************************");
+    log.info(result.toString());
+    log.info("********************************************************");
     // we'll count how many results we get with i
     int i = 0;
     for (Object obj : result.getJSONArray("items")) {
@@ -135,17 +138,18 @@ public class StackOverFlowSourceTask extends SourceTask {
       SourceRecord sourceRecord = generateSourceRecord(question);
       records.add(sourceRecord);
       i += 1;
-      lastUpdatedAt = question.getLastActivityDate();
+      lastUpdatedAt = question.getCreationDate();
     }
     if (i > 0) log.info(String.format("Fetched %s record(s)", i));
-    if (i == 100) {
-      // we have reached a full batch, we need to get the next one
-      nextPageToVisit += 1;
-    } else {
-      nextQuerySince = lastUpdatedAt.plusSeconds(1);
-      nextPageToVisit = 1;
-      stackOverFlowHttpAPIClient.sleep();
-    }
+    // if (i == 100) {
+    // we have reached a full batch, we need to get the next one
+    //  nextPageToVisit += 1;
+    // } else {
+    // nextQuerySince = lastUpdatedAt.plusSeconds(1);
+    // nextPageToVisit = 1;
+    // stackOverFlowHttpAPIClient.sleep();
+    Thread.sleep(1);
+    // }
     log.info("returning records");
     return records;
   }

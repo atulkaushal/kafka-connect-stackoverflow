@@ -20,9 +20,6 @@ import java.util.Map;
 import org.json.CDL;
 import org.json.JSONObject;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 /**
  * The Class Question.
  *
@@ -509,20 +506,10 @@ public class Question {
    * @return the question
    */
   public static Question fromJson(JSONObject jsonObject) {
-
-    System.out.println("********************QUESTION JSON**********************************");
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    System.out.println(gson.toJson(jsonObject));
-    System.out.println("******************************************************");
-
     Question question = new Question();
     question.withTags(
         jsonObject.has(TAGS_FIELD)
             ? CDL.rowToString(jsonObject.getJSONArray(TAGS_FIELD))
-            /*new Gson()
-            .fromJson(
-                jsonObject.getJSONArray(TAGS_FIELD).toString(),
-                new TypeToken<HashSet<String>>() {}.getType())*/
             : null);
     question.withAnswerCount(
         jsonObject.has(ANSWER_COUNT_FIELD) ? jsonObject.getInt(ANSWER_COUNT_FIELD) : 0);
