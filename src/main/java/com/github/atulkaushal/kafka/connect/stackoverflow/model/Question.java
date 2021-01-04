@@ -508,9 +508,7 @@ public class Question {
   public static Question fromJson(JSONObject jsonObject) {
     Question question = new Question();
     question.withTags(
-        jsonObject.has(TAGS_FIELD)
-            ? CDL.rowToString(jsonObject.getJSONArray(TAGS_FIELD))
-            : null);
+        jsonObject.has(TAGS_FIELD) ? CDL.rowToString(jsonObject.getJSONArray(TAGS_FIELD)) : null);
     question.withAnswerCount(
         jsonObject.has(ANSWER_COUNT_FIELD) ? jsonObject.getInt(ANSWER_COUNT_FIELD) : 0);
     question.withContentLicense(
